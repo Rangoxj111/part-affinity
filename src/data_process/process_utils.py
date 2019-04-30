@@ -75,18 +75,24 @@ def resize(img, ignore_mask, keypoints, imgSize):
 
 
 def resize_hm(heatmap, hm_size):
+    if heatmap.shape[1] < hm_size:
+        mode = cv2.INTER_CUBIC
+    else: mode = cv2.INTER_AREA    
     if np.isscalar(hm_size):
         hm_size = (hm_size, hm_size)
-    heatmap = cv2.resize(heatmap.transpose(1, 2, 0), hm_size,interpolation=cv2.INTER_CUBIC)
+    heatmap = cv2.resize(heatmap.transpose(1, 2, 0), hm_size,interpolation=mode)
     return heatmap.transpose(2, 0, 1)
 
 
 def resize_hm_paf(heatmap, paf, ignore_mask, hm_size):
+    if heatmap.shape[1] < hm_size:
+        mode = cv2.INTER_CUBIC
+    else: mode = cv2.INTER_AREA 
     ignore_mask = cv2.resize(ignore_mask, (hm_size, hm_size))
     heatmap = resize_hm(heatmap, hm_size)
     paf = paf.transpose(2,3,0,1)
     paf = paf.reshape(paf.shape[0], paf.shape[1], paf.shape[2] * paf.shape[3])
-    paf = cv2.resize(paf, (hm_size, hm_size),interpolation=cv2.INTER_CUBIC)
+    paf = cv2.resize(paf, (hm_size, hm_size),interpolation=mode)
     paf = paf.transpose(2, 0, 1)
     return heatmap, paf, ignore_mask
 
