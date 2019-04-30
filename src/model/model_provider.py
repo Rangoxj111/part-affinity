@@ -28,5 +28,23 @@ def create_model(opt):
     return model, criterion_hm, criterion_paf
 
 
-def create_optimizer(opt, model):
-    return torch.optim.Adam(model.parameters(), opt.LR)
+def create_optimizer(opt, model, isdefault=Ture):
+    if isdefault:
+        return torch.optim.Adam(model.parameters(), opt.LR)
+    else:
+        params = get_parameters(opt, model)
+        return torch.optim.Adam(params, opt.LR)
+ 
+def get_parameters(opt, model)
+    lr1 = []
+    lr2 = []
+    params_dict = dict(model.named_parameters())
+    for key,value in params_dict.items():
+        if value.requires_grad:
+            if 'stage' in key:
+                lr2.append(value)
+            else:
+                lr1.append(value)
+    params = [{'params': lr1, 'lr': opt.LR},
+              {'params': lr2, 'lr': opt.LR * 2}]              
+    return params
